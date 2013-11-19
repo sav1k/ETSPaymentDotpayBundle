@@ -140,8 +140,9 @@ class DotpayDirectPlugin extends AbstractPlugin
         $actionRequest->setFinancialTransaction($transaction);
 
         $instruction = $transaction->getPayment()->getPaymentInstruction();
-
         $extendedData = $transaction->getExtendedData();
+        $extendedArrayData = $transaction->getPayment()->getPaymentInstruction()->getExtendedData()->get('predefined_data')['dotpay_direct'];
+
         $urlc         = $this->router->generate('ets_payment_dotpay_callback_urlc', array(
             'id' => $instruction->getId()
         ), true);
@@ -154,7 +155,8 @@ class DotpayDirectPlugin extends AbstractPlugin
 
             'amount'      => $transaction->getRequestedAmount(),
             'currency'    => $instruction->getCurrency(),
-            'description' => sprintf('Payment Instruction #%d', $instruction->getId()),
+            'description' => $extendedArrayData['description'],
+
         );
 
         $additionalDatas = array(
@@ -162,9 +164,11 @@ class DotpayDirectPlugin extends AbstractPlugin
             'firstname', 'email', 'country', 'city', 'grupykanalow',
         );
 
-        foreach ($additionalDatas as $value) {
-            if ($extendedData->has($value)) {
-                $datas[$value] = $this->stringTools->normalize($extendedData->get($value));
+        foreach ($additionalDatas as $value)
+        {
+            if(array_key_exists($value, $extendedArrayData))
+            {
+                $datas[$value] = $this->stringTools->normalize($extendedArrayData[$value]);
             }
         }
 
