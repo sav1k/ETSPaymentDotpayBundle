@@ -53,8 +53,7 @@ class CallbackController extends Controller
         // Check the PIN
         $control = md5(sprintf(
             "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s",
-            //$client->getPin(),
-            '',
+            $client->getPin(),
             $client->getId(),
             $request->request->get('control'),
             $request->request->get('t_id'),
